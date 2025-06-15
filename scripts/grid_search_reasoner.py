@@ -3,20 +3,20 @@ from loguru import logger
 
 reasoners = [
     # "Qwen/Qwen3-32B@think",
-    "Qwen/QwQ-32B",
+    # "Qwen/QwQ-32B",
     # "o4-mini",
 ]
 
 questions = [
     # "Qwen/Qwen3-32B@think",
-    "Qwen/QwQ-32B",
+    # "Qwen/QwQ-32B",
     # "o4-mini",
     None,
 ]
 
 answers = [
     # "Qwen/Qwen3-32B@think",
-    "Qwen/QwQ-32B",
+    # "Qwen/QwQ-32B",
     # "o4-mini",
     None,
 ]
@@ -35,14 +35,12 @@ verifier_prompts = [
 dataset_paths = []
 ROOT_DIRS = [
     "data/bionli",
-    # "data/wice",
-    # "data/fever",
+    "data/wice",
+    "data/fever",
 ]
 for ROOT_DIR in ROOT_DIRS:
     for root, dirs, files in os.walk(ROOT_DIR):
         for f in files:
-            if "_300" not in f:
-                continue
             if f.endswith(".csv") and "tmp" not in f:
                 dataset_paths.append(f"{root}/{f}")
 dataset_paths = dataset_paths[::-1]
@@ -97,7 +95,7 @@ for dataset_path in dataset_paths:
                             cmd += " --depresupposition"
 
                         # for openai models, less number of parallel runs
-                        if "o4-mini" in reasoner or "o4-mini" in question or "o4-mini" in answer:
+                        if "o4-mini" in reasoner or (question and "o4-mini" in question) or (answer and "o4-mini" in answer):
                             cmd += " --num_of_workers 2"
                         else:
                             cmd += " --num_of_workers 64"

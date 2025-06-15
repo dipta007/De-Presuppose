@@ -9,7 +9,7 @@ import numpy as np
 from joblib import Parallel, delayed
 from loguru import logger
 from openai import OpenAI
-from src.reasoner.utils import get_generation_arguments
+from src.utils import get_generation_arguments
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 from tqdm.auto import tqdm
 
@@ -17,7 +17,7 @@ from tqdm.auto import tqdm
 def get_subclaims():
     claim2subclaims = {}
 
-    with jsonlines.open("data/wice/test.jsonl") as reader:
+    with jsonlines.open("data/wice/test_with_subclaims.jsonl") as reader:
         for line in reader:
             claim2subclaims[line["claim"]] = [(x["claim"], x["label"]) for x in line["subclaims"]]
 
@@ -175,8 +175,6 @@ def eval_wice(args, run_num):
     with jsonlines.open(args.eval_gen_path) as reader:
         for line in reader:
             subclaims = claim2subclaims[line["claim"]]
-            # subclaims = [x[0] for x in subclaims]
-            # subclaims = list(set(subclaims))
             if "Q_questions" not in line:
                 logger.warning(f"No questions for claim: {line['claim']}")
                 raise Exception(f"No questions for claim: {line['claim']}")
@@ -257,36 +255,37 @@ if __name__ == "__main__":
     args.raw_model_id = args.model_id
     args.model_id = args.model_id.split("@")[0]
     ROOT_DIRS = [
-        "outputs/bionli",
         "outputs/wice",
-        "outputs/fever",
     ]
     error_exps = []
     for ROOT_DIR in ROOT_DIRS:
-        dirs = os.listdir(ROOT_DIR)
-        dirs = [x for x in dirs if os.path.isdir(f"{ROOT_DIR}/{x}")]
-        for exp in dirs:
-            error_flag = False
-            records_files = glob.glob(f"{ROOT_DIR}/{exp}/records_[0-9]*.jsonl", recursive=False)
-            num_of_runs = len(records_files)
-            for i, path_to_record in enumerate(records_files):
-                path_to_coverage_results = path_to_record.replace("records_", "coverage_results_")
-                if os.path.exists(path_to_coverage_results):
-                    logger.info(f"Skipping {path_to_record} because it already exists")
-                    continue
-                args.eval_gen_path = path_to_record
-                args.output_dir = os.path.dirname(args.eval_gen_path)
-                print(json.dumps(args.__dict__, indent=4))
-                try:
-                    eval_wice(args, i)
-                except Exception as e:
-                    print(e)
-                    logger.error(f"Error evaluating {path_to_record}: {e}")
-                    error_exps.append(f"{exp}")
-                    error_flag = True
-                    continue
+        prompts = os.listdir(ROOT_DIR)
+        prompts = [x for x in prompts if os.path.isdir(f"{ROOT_DIR}/{x}")]
+        for prompt in prompts:
+            models = os.listdir(f"{ROOT_DIR}/{prompt}")
+            models = [x for x in models if os.path.isdir(f"{ROOT_DIR}/{prompt}/{x}")]
+            for model in models:
+                error_flag = False
+                records_files = glob.glob(f"{ROOT_DIR}/{prompt}/{model}/records_[0-9]*.jsonl", recursive=False)
+                num_of_runs = len(records_files)
+                for i, path_to_record in enumerate(records_files):
+                    path_to_coverage_results = path_to_record.replace("records_", "coverage_results_")
+                    if os.path.exists(path_to_coverage_results):
+                        logger.info(f"Skipping {path_to_record} because it already exists")
+                        continue
+                    args.eval_gen_path = path_to_record
+                    args.output_dir = os.path.dirname(args.eval_gen_path)
+                    print(json.dumps(args.__dict__, indent=4))
+                    try:
+                        eval_wice(args, i)
+                    except Exception as e:
+                        print(e)
+                        logger.error(f"Error evaluating {path_to_record}: {e}")
+                        error_exps.append(f"{prompt}/{model}")
+                        error_flag = True
+                        continue
 
                 if not error_flag and num_of_runs > 0:
-                    aggregate_metrics(f"{ROOT_DIR}/{exp}", num_of_runs)
+                    aggregate_metrics(f"{ROOT_DIR}/{prompt}/{model}", num_of_runs)
 
         print(f"Error experiments: {error_exps}")

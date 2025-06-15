@@ -306,8 +306,6 @@ def main(args, run_num):
     if args.debug:
         df = df.sample(n=20)
 
-    df = df.sample(n=7)
-
     #############################
     # Run the reasoner parallelly
     #############################
