@@ -161,6 +161,6 @@ watchfiles==1.0.5
 wcwidth==0.2.13
 websockets==15.0.1
 xformers==0.0.30
-xgrammar==0.1.19
+xgrammar==0.1.21
 yarl==1.20.1
 zipp==3.23.0
