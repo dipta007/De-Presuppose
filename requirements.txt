@@ -152,7 +152,7 @@ typer==0.16.0
 typing-extensions==4.14.0
 typing-inspection==0.4.1
 tzdata==2025.2
-urllib3==2.4.0
+urllib3==2.5.0
 uvicorn==0.34.3
 uvloop==0.21.0
 virtualenv==20.31.2
