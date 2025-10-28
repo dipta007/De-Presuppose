@@ -732,6 +732,123 @@ a:focus {
 }
 
 
+/* Image Zoom Modal Styles */
+.zoomable-image {
+  cursor: pointer;
+  transition: var(--transition);
+  border-radius: var(--border-radius);
+}
+
+.zoomable-image:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-lg);
+  opacity: 0.9;
+}
+
+.modal {
+  z-index: 2000;
+}
+
+.modal-content {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+}
+
+.modal-content .box {
+  background: var(--background-primary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+  padding: 2rem;
+  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+}
+
+.modal-content .box img {
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+}
+
+.modal-content .title {
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.modal-close {
+  background: var(--background-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2001;
+}
+
+.modal-close:hover {
+  background: var(--background-accent);
+  border-color: var(--primary-color);
+  transform: scale(1.1);
+}
+
+.modal-close::before {
+  content: '×';
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  font-weight: bold;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close:hover::before {
+  color: var(--primary-color);
+}
+
+/* Research Results Gallery Image Fixes */
+.research-gallery .image.is-4by3 {
+  background: var(--background-primary);
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem;
+  min-height: 300px;
+  aspect-ratio: unset !important;
+  height: auto !important;
+}
+
+.research-gallery .image.is-4by3::before {
+  display: none !important;
+}
+
+.research-gallery .image.is-4by3 img {
+  max-width: 100%;
+  max-height: 280px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  position: relative;
+  z-index: 1;
+}
+
+.research-gallery .image.is-4by3 img:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
 /* Print styles */
 @media print {
   .more-works-container {

@@ -90,6 +90,33 @@ window.addEventListener('scroll', function() {
     }
 });
 
+// Image modal functionality
+function openImageModal(imageSrc, imageTitle) {
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    
+    modalImage.src = imageSrc;
+    modalImage.alt = imageTitle;
+    modalTitle.textContent = imageTitle;
+    
+    modal.classList.add('is-active');
+    document.body.classList.add('is-clipped');
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.remove('is-active');
+    document.body.classList.remove('is-clipped');
+}
+
+// Close modal on escape key
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeImageModal();
+    }
+});
+
 // Video carousel autoplay when in view
 function setupVideoCarouselAutoplay() {
     const carouselVideos = document.querySelectorAll('.results-carousel video');
